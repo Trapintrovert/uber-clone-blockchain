@@ -17,11 +17,10 @@ const style = {
   price: `mr-[-0.8rem]`,
 }
 
-const basePrice = 1542
+
 const RideSelector = () => {
   const [carList, setCarList] = useState([])
-  const { selectedRide, setSelectedRide, setPrice,  } =
-    useContext(UberContext)
+  const { selectedRide, setSelectedRide, setPrice, basePrice } = useContext(UberContext)
 
   console.log(basePrice)
 
@@ -31,6 +30,7 @@ const RideSelector = () => {
         const response = await fetch('/api/db/getRideTypes')
 
         const data = await response.json()
+        console.log("cars", data.data)
         setCarList(data.data)
         setSelectedRide(data.data[0])
       } catch (error) {

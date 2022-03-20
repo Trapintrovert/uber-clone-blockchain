@@ -10,6 +10,7 @@ export const UberProvider = ({children}) => {
     const [pickupCoordinates, setPickupCoordinates] = useState()
     const [dropoffCoordinates, setDropoffCoordinates] = useState()
     const [currentAccount, setCurrentAccount] = useState()
+    const [currentUser, setCurrentUser] = useState([])
 
     let metamask;
 
@@ -20,6 +21,11 @@ export const UberProvider = ({children}) => {
     useEffect(() => {
         checkIfWalletIsConnected()
     }, [])
+    
+    useEffect(() => {
+        if(!currentAccount) return
+        requestToGetCurrentUserInfo(currentAccount)
+    }, [currentAccount])
     
 
     const checkIfWalletIsConnected = async () => {
@@ -121,6 +127,18 @@ export const UberProvider = ({children}) => {
               console.error(error)
           }
       }
+
+    const requestToGetCurrentUserInfo = async (walletAddress) => {
+        try {
+            const response = await fetch(
+                `/api/db/getUserInfo?walletAddress=${walletAddress}`,
+            )
+            const data = await response.json()
+            setCurrentUser(data.data)
+        } catch (error) {
+            console.error(error)
+        }
+    }
     
     return(
         <UberContext.Provider value={{
@@ -133,7 +151,8 @@ export const UberProvider = ({children}) => {
             dropoffCoordinates,
             setDropoffCoordinates,
             connectWallet,
-            currentAccount
+            currentAccount,
+            currentUser
         }}>
             {children}
         </UberContext.Provider>
